@@ -7,5 +7,6 @@
     <string name="search_hint">Search The Dictionary</string>
     <string name="no_result_title">No Results Found</string>
     <string name="no_result_description">hmm, looks like I haven\'t come accross this word before. :(</string>
+    <string name="type">Type</string>
 
 </resources>

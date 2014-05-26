@@ -13,7 +13,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 public class DatabaseController extends SQLiteAssetHelper {
 
 
-    private static final String DATABASE_NAME = "dic.db";
+    private static final String DATABASE_NAME = "definitions.sqlite";
     private static final String TABLE_NAME = "words";
     private static final int DATABASE_VERSION = 1;
 

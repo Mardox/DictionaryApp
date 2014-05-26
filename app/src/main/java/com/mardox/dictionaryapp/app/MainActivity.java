@@ -3,6 +3,8 @@ package com.mardox.dictionaryapp.app;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +33,23 @@ public class MainActivity extends ActionBarActivity {
         typeQueryTV = (TextView) findViewById(R.id.type_tv);
         definationTV = (TextView) findViewById(R.id.description_tv);
 
+        wordQueryET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    searchWord();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         wordQueryET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -57,6 +76,44 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
+    private void searchWord(){
+
+        //Search the database and update the UI.
+
+
+//        Dictionary dic = new Dictionary();
+//        Word search_result = dic.search(wordQueryET.getText().toString());
+
+
+        if(!wordQueryET.getText().toString().isEmpty()){
+
+            DatabaseController dbc = new DatabaseController(getApplicationContext());
+            Word search_result = dbc.search(wordQueryET.getText().toString());
+
+
+            if(search_result.getDefinition() != null){
+                wordQueryTV.setText(search_result.getWord());
+                typeQueryTV.setVisibility(View.VISIBLE);
+                typeQueryTV.setText(getString(R.string.type)+": "+search_result.getType());
+                definationTV.setText(search_result.getDefinition());
+                definationTV.setGravity(0);// set the gravity to center
+            }else{
+                wordQueryTV.setText(getString((R.string.no_result_title)));
+                typeQueryTV.setVisibility(View.INVISIBLE);
+                definationTV.setText(getString(R.string.no_result_description));
+                definationTV.setGravity(17);// set the gravity to center
+            }
+
+        }else{
+            //Clean the result when the search is empty
+            wordQueryTV.setText("");
+            typeQueryTV.setText("");
+            definationTV.setText("");
+        }
+
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -69,34 +126,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void searchWord(){
-
-        //Search the database and update the UI.
-
-
-//        Dictionary dic = new Dictionary();
-//        Word search_result = dic.search(wordQueryET.getText().toString());
-
-        DatabaseController dbc = new DatabaseController(getApplicationContext());
-        Word search_result = dbc.search(wordQueryET.getText().toString());
-
-
-        if(search_result.getDefinition() != null){
-            wordQueryTV.setText(search_result.getWord());
-            typeQueryTV.setVisibility(View.VISIBLE);
-            typeQueryTV.setText("Type: "+search_result.getType());
-            definationTV.setText(search_result.getDefinition());
-            definationTV.setGravity(0);// set the gravity to center
-        }else{
-            wordQueryTV.setText(getString((R.string.no_result_title)));
-            typeQueryTV.setVisibility(View.INVISIBLE);
-            definationTV.setText(getString(R.string.no_result_description));
-            definationTV.setGravity(17);// set the gravity to center
-        }
-
-
-    }
-
 
 }
+
 
