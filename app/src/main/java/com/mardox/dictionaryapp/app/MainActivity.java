@@ -1,5 +1,6 @@
 package com.mardox.dictionaryapp.app;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,12 +9,13 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,10 +36,14 @@ public class MainActivity extends ActionBarActivity {
 
     final Context context = this;
 
+    Button switchLanguageBT;
     EditText wordQueryET;
     TextView wordQueryTV;
     TextView typeQueryTV;
     TextView definitionTV;
+    RelativeLayout mainLayout;
+
+    boolean languageSwitchFlag = true;
 
 
     //Admob
@@ -56,11 +62,19 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        switchLanguageBT = (Button) findViewById(R.id.switch_language_bt);
         wordQueryET = (EditText) findViewById(R.id.query_et);
         wordQueryTV = (TextView) findViewById(R.id.query_tv);
         typeQueryTV = (TextView) findViewById(R.id.type_tv);
         definitionTV = (TextView) findViewById(R.id.description_tv);
+        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
 
+
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
+
+
+        //live search handler
         wordQueryET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -78,6 +92,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        //on click listener for the search button on the keyboard
         wordQueryET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -93,6 +108,36 @@ public class MainActivity extends ActionBarActivity {
         });
 
 
+        //Hide keyboard on off the edit text tap
+        mainLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "relative layout tag");
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(wordQueryET.getWindowToken(), 0);
+            }
+        });
+
+        //Setting the switch button text
+        switchLanguageBT.setText(getString(R.string.language_a)+"  >  "+getString(R.string.language_b));
+
+        //Language switch listener
+        switchLanguageBT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(languageSwitchFlag){
+                    languageSwitchFlag = false;
+                    switchLanguageBT.setText(getString(R.string.language_b)+"  >  "+getString(R.string.language_a));
+                }else{
+                    languageSwitchFlag = true;
+                    switchLanguageBT.setText(getString(R.string.language_a)+"  >  "+getString(R.string.language_b));
+                }
+                wordQueryET.setText("");
+            }
+        });
+
+
+        //Help overlay controller
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_MULTI_PROCESS);
         boolean overlay_shown = settings.getBoolean("helpOverlay", false);
         if(!overlay_shown){
@@ -100,9 +145,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
 
-        //Initiate the admob banner
+        //Initiate the Admob banner
         adMobBannerInitiate();
-        adMobInterstitialInitiate();
+        //adMobInterstitialInitiate();
 
 
     }
@@ -149,12 +194,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
 
     private void searchWord(){
 
@@ -163,13 +208,15 @@ public class MainActivity extends ActionBarActivity {
         if(!wordQueryET.getText().toString().isEmpty()){
 
             DatabaseController dbc = new DatabaseController(getApplicationContext());
-            Word search_result = dbc.search(wordQueryET.getText().toString());
+            Word search_result = dbc.search(wordQueryET.getText().toString().trim(), languageSwitchFlag);
 
 
             if(search_result.getDefinition() != null){
                 wordQueryTV.setText(search_result.getWord());
-                typeQueryTV.setVisibility(View.VISIBLE);
-                typeQueryTV.setText(getString(R.string.type)+": "+search_result.getType());
+                if(search_result.getType()!=null){
+                    typeQueryTV.setVisibility(View.VISIBLE);
+                    typeQueryTV.setText(getString(R.string.type)+": "+search_result.getType());
+                }
                 definitionTV.setText(search_result.getDefinition());
                 definitionTV.setGravity(0);// set the gravity to center
             }else{
@@ -314,9 +361,9 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 

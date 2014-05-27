@@ -14,7 +14,7 @@ public class DatabaseController extends SQLiteAssetHelper {
 
 
     private static final String DATABASE_NAME = "definitions.sqlite";
-    private static final String TABLE_NAME = "words";
+    private static String TABLE_NAME = "ab";
     private static final int DATABASE_VERSION = 1;
 
     public DatabaseController(Context context) {
@@ -22,7 +22,13 @@ public class DatabaseController extends SQLiteAssetHelper {
     }
 
 
-    public Word search(String query){
+    public Word search(String query, boolean languageSwitch){
+
+        if(languageSwitch){
+            TABLE_NAME = "ab";
+        }else{
+            TABLE_NAME = "ba";
+        }
 
         Word result = new Word();
         SQLiteDatabase db = getReadableDatabase();
@@ -32,35 +38,34 @@ public class DatabaseController extends SQLiteAssetHelper {
         String sqlTables = "words";
 
         qb.setTables(sqlTables);
-//        Cursor c = qb.query(db, sqlSelect, "word" + "=?", new String [] {query}, null,
-//                null, null, null);
+        Cursor c ;
 
-        Cursor c = db.rawQuery("SELECT word, definition, type FROM "
+        c = db.rawQuery("SELECT word, definition, type FROM "
                 + TABLE_NAME + " where " + "word" + " like '" + query
-                + "%'", null);
+                + "' ORDER BY word ASC", null);
 
-        c.moveToFirst();
 
-        if (c.moveToFirst()) {
-                result.setWord(c.getString(0));
-                result.setDefinition(c.getString(1));
-                result.setType(c.getString(2));
-                // Adding contact to list
-        }else{
+        if(!c.moveToFirst()){
+            c = db.rawQuery("SELECT word, definition, type FROM "
+                    + TABLE_NAME + " where " + "word" + " like '" + query
+                    + "%' ORDER BY word ASC", null);
+        }
+
+        if (!c.moveToFirst()) {
             c = db.rawQuery("SELECT word, definition, type FROM "
                     + TABLE_NAME + " where " + "word" + " like '%" + query
-                    + "%'", null);
-            if (c.moveToFirst()) {
-                result.setWord(c.getString(0));
-                result.setDefinition(c.getString(1));
-                result.setType(c.getString(2));
-                // Adding contact to list
-            }
+                    + "%' ORDER BY word ASC", null);
+        }
+
+        if (c.moveToFirst()) {
+            c.moveToFirst();
+            result.setWord(c.getString(0));
+            result.setDefinition(c.getString(1));
+            result.setType(c.getString(2));
+            // Adding contact to list
         }
 
         return result;
-
-
 
     }
 
