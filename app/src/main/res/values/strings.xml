@@ -8,5 +8,7 @@
     <string name="no_result_title">No Results Found</string>
     <string name="no_result_description">hmm, looks like I haven\'t come accross this word before. :(</string>
     <string name="type">Type</string>
+    <string name="admob_id_interstitials">ca-app-pub-7607380003153721/5107403495</string>
+    <string name="admob_id_home">ca-app-pub-7607380003153721/8200470699</string>
 
 </resources>
