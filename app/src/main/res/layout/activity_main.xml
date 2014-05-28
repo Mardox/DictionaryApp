@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mardox.dictionaryapp.app.MainActivity"
+    tools:context="com.thirthydaylabs.entadic.MainActivity"
     android:id="@+id/main_layout">
 
 
@@ -11,6 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ff00a6dd"
+            android:textColor="#ffffff"
             android:textSize="25dp"
             />
 
@@ -20,13 +21,12 @@
             android:inputType="text"
             android:hint="@string/search_hint"
             android:textSize="30dp"
-            android:layout_marginTop="8dp"
             android:imeOptions="actionSearch"
             android:textColorHighlight="#ff00a6dd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/switch_language_bt"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
             />
 
         <ScrollView
@@ -35,7 +35,7 @@
             android:layout_marginTop="20px"
             android:layout_marginBottom="50px"
             android:layout_below="@id/query_et"
-            android:layout_margin="10dp">
+            android:layout_margin="15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
