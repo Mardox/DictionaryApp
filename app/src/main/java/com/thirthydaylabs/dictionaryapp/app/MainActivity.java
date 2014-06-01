@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,8 +65,7 @@ public class MainActivity extends ActionBarActivity {
     TextView otherDefinitionsTV;
     TextView otherDefinitionsDescriptionTV;
     TextView definitionTV;
-    RelativeLayout mainLayout;
-    LinearLayout resultL;
+    LinearLayout scrollView;
     boolean languageSwitchFlag = true;
 
 
@@ -95,9 +93,7 @@ public class MainActivity extends ActionBarActivity {
         otherDefinitionsTV = (TextView) findViewById(R.id.other_definitions_tv);
         otherDefinitionsDescriptionTV = (TextView) findViewById(R.id.other_definitions_description_tv);
         definitionTV = (TextView) findViewById(R.id.description_tv);
-        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
-        resultL = (LinearLayout) findViewById(R.id.result_layout);
-
+        scrollView = (LinearLayout) findViewById(R.id.result_layout);
 
         ActionBar actionBar = getActionBar();
         actionBar.hide();
@@ -126,9 +122,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
-                if(actionId == EditorInfo.IME_ACTION_SEARCH){
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(wordQueryET.getWindowToken(), 0);
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    hideKeyboard();
                     searchWord();
                     handled = true;
                 }
@@ -137,13 +132,18 @@ public class MainActivity extends ActionBarActivity {
         });
 
 
+        wordQueryET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                hideKeyboard();
+            }
+        });
+
         //Hide keyboard on off the edit text tap
-        mainLayout.setOnClickListener(new View.OnClickListener() {
+        scrollView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "relative layout tag");
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(wordQueryET.getWindowToken(), 0);
+                hideKeyboard();
             }
         });
 
@@ -182,6 +182,11 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(wordQueryET.getWindowToken(), 0);
+    }
 
 
     //Activity life cycles
@@ -273,9 +278,8 @@ public class MainActivity extends ActionBarActivity {
 //                definitionTV.setGravity(0);// set the gravity to center
 //            }else{
                 //Search the network
-
                 String[] asyncTaskParams = {"",""};
-                asyncTaskParams[0] = query;
+                asyncTaskParams[0] = query.replace(" ","%20");
                 if(languageSwitchFlag)
                     asyncTaskParams[1] = "ab";
                 else
