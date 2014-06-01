@@ -19,4 +19,9 @@
     <string name="no_result_description">hmm, looks like I haven\'t come accross this word before. :(</string>
     <string name="type">Type</string>
     <string name="phrases">Phrases</string>
+    <string name="other_difinitions_description">Other Results:</string>
+    <string name="error_dialog_title">Error!</string>
+    <string name="no_internet_message">No Internet Connection is Detected.</string>
+    <string name="retry_button">Retry</string>
+    <string name="offline_mode">Working in Offline Mode \n (No Internet Access - Limited Results)</string>
 </resources>

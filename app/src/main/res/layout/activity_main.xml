@@ -6,16 +6,28 @@
     android:id="@+id/main_layout">
 
 
-        <Button
-            android:id="@+id/switch_language_bt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ff00a6dd"
-            android:textColor="#ffffff"
-            android:textSize="25dp"
-            />
+    <Button
+        android:id="@+id/switch_language_bt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff00a6dd"
+        android:textColor="#ffffff"
+        android:textSize="25dp"
+        />
 
-        <EditText
+    <TextView
+        android:id="@+id/no_internet_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffff206a"
+        android:text="@string/offline_mode"
+        android:layout_below="@id/switch_language_bt"
+        android:textSize="15dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginBottom="-10dp"/>
+
+    <EditText
             android:id="@+id/query_et"
             android:textColor="#ff00a6dd"
             android:inputType="text"
@@ -25,19 +37,22 @@
             android:textColorHighlight="#ff00a6dd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/switch_language_bt"
+            android:layout_below="@id/no_internet_tv"
             android:layout_margin="10dp"
             />
+
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/query_et"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="60dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
+            android:layout_marginRight="10dp"
+            >
 
             <LinearLayout
+                android:id="@+id/result_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -58,8 +73,20 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/phrase_tv"
-                    android:textSize="23dp"
+                    android:id="@+id/other_definitions_description_tv"
+                    android:textSize="20dp"
+                    android:text="@string/other_difinitions_description"
+                    android:visibility="gone"
+                    android:textStyle="bold|italic"
+                    android:textColor="#ff00213a"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+                <TextView
+                    android:id="@+id/other_definitions_tv"
+                    android:textSize="18dp"
                     android:textColor="#ff0089dd"
                     android:layout_marginTop="10dp"
                     android:layout_width="match_parent"

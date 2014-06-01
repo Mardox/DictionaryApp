@@ -2,9 +2,13 @@ package com.thirthydaylabs.dictionaryapp.app;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +22,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -55,12 +60,14 @@ public class MainActivity extends ActionBarActivity {
 
     Button switchLanguageBT;
     EditText wordQueryET;
+    TextView noInternetTV;
     TextView wordQueryTV;
     TextView typeQueryTV;
-    TextView phraseTV;
+    TextView otherDefinitionsTV;
+    TextView otherDefinitionsDescriptionTV;
     TextView definitionTV;
     RelativeLayout mainLayout;
-
+    LinearLayout resultL;
     boolean languageSwitchFlag = true;
 
 
@@ -82,11 +89,14 @@ public class MainActivity extends ActionBarActivity {
 
         switchLanguageBT = (Button) findViewById(R.id.switch_language_bt);
         wordQueryET = (EditText) findViewById(R.id.query_et);
+        noInternetTV = (TextView) findViewById(R.id.no_internet_tv);
         wordQueryTV = (TextView) findViewById(R.id.query_tv);
         typeQueryTV = (TextView) findViewById(R.id.type_tv);
-        phraseTV = (TextView) findViewById(R.id.phrase_tv);
+        otherDefinitionsTV = (TextView) findViewById(R.id.other_definitions_tv);
+        otherDefinitionsDescriptionTV = (TextView) findViewById(R.id.other_definitions_description_tv);
         definitionTV = (TextView) findViewById(R.id.description_tv);
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        resultL = (LinearLayout) findViewById(R.id.result_layout);
 
 
         ActionBar actionBar = getActionBar();
@@ -152,6 +162,7 @@ public class MainActivity extends ActionBarActivity {
                     switchLanguageBT.setText(getString(R.string.language_a)+"  >  "+getString(R.string.language_b));
                 }
                 wordQueryET.setText("");
+                otherDefinitionsDescriptionTV.setVisibility(View.GONE);
             }
         });
 
@@ -229,12 +240,19 @@ public class MainActivity extends ActionBarActivity {
         wordQueryTV.setText("");
         definitionTV.setText("");
         typeQueryTV.setText("");
-        phraseTV.setText("");
+        otherDefinitionsTV.setText("");
+        otherDefinitionsDescriptionTV.setVisibility(View.GONE);
 
         if(!query.isEmpty()){
 
-            DatabaseController dbc = new DatabaseController(getApplicationContext());
-            Word search_result = dbc.search(query, languageSwitchFlag);
+
+            //Check if the internet connection is available
+            if(!isOnline()){
+                noInternetTV.setVisibility(View.VISIBLE);
+                OfflineSearch();
+                return;
+            }
+            noInternetTV.setVisibility(View.GONE);
 
             AsyncTask apiSearchAsyncTask = new APICall();
             if(apiSearchAsyncTask.getStatus()== AsyncTask.Status.RUNNING){
@@ -242,6 +260,8 @@ public class MainActivity extends ActionBarActivity {
                 boolean status = apiSearchAsyncTask.isCancelled();
             }
 
+            DatabaseController dbc = new DatabaseController(getApplicationContext());
+            Word search_result = dbc.search(query, languageSwitchFlag);
 //            if(search_result.getDefinition() != null){
 //                wordQueryTV.setText(search_result.getWord());
 //                if(search_result.getType()!=null){
@@ -269,18 +289,12 @@ public class MainActivity extends ActionBarActivity {
                 wordQueryTV.setText("Searching Network");
                 definitionTV.setVisibility(View.GONE);
                 typeQueryTV.setVisibility(View.GONE);
-                phraseTV.setVisibility(View.GONE);
+                otherDefinitionsTV.setVisibility(View.GONE);
+                otherDefinitionsDescriptionTV.setVisibility(View.GONE);
 
 //            }
 
-        }else{
-            //Clean the result when the search is empty
-            wordQueryTV.setText("");
-            phraseTV.setText("");
-            typeQueryTV.setText("");
-            definitionTV.setText("");
         }
-
 
     }
 
@@ -378,24 +392,30 @@ public class MainActivity extends ActionBarActivity {
                         JSONArray currentAuthorMeaningsObject = currentAuthorObject.getJSONArray("meanings");
                         for (int j = 0; j <currentAuthorMeaningsObject.length(); j++){
                             JSONObject currentMeaningObject = currentAuthorMeaningsObject.getJSONObject(j);
-                            if(currentMeaningObject.get("language").toString().equals(targetLanguageCode)){
-                                targetDefinition += currentMeaningObject.get("text").toString()+", ";
-                            }else if(currentMeaningObject.get("language").toString().equals(otherLanguageCode)){
-                                otherDefinitions += currentMeaningObject.get("text").toString()+", ";
-                            }else if(currentMeaningObject.get("language").toString().equals("eng")) {
-                                otherDefinitions += currentMeaningObject.get("text").toString() + ", ";
+                            //Check if the string is number free
+                            if(!currentMeaningObject.get("text").toString().matches(".*\\d.*")) {
+                                if (currentMeaningObject.get("language").toString().equals(targetLanguageCode)) {
+                                    targetDefinition += currentMeaningObject.get("text").toString() + ", ";
+                                } else if (currentMeaningObject.get("language").toString().equals(otherLanguageCode)) {
+                                    otherDefinitions += currentMeaningObject.get("text").toString() + ", ";
+                                } else if (currentMeaningObject.get("language").toString().equals("eng")) {
+                                    otherDefinitions += currentMeaningObject.get("text").toString() + ", ";
+                                }
                             }
                         }
                     }
 
                     if(currentAuthorObject.has("phrase")){
                         JSONObject currentAuthorPhraseObject = currentAuthorObject.getJSONObject("phrase");
-                        if(currentAuthorPhraseObject.get("language").toString().equals(targetLanguageCode)){
-                            targetLanguagePhrase += currentAuthorPhraseObject.get("text").toString()+", ";
-                        }else if(currentAuthorPhraseObject.get("language").toString().equals(otherLanguageCode)){
-                            otherLanguagePhrase += currentAuthorPhraseObject.get("text").toString()+", ";
-                        }else if(currentAuthorPhraseObject.get("language").toString().equals("eng")){
-                            otherLanguagePhrase += currentAuthorPhraseObject.get("text").toString()+", ";
+                        //Check if the string is number free
+                        if(!currentAuthorPhraseObject.get("text").toString().matches(".*\\d.*")) {
+                            if (currentAuthorPhraseObject.get("language").toString().equals(targetLanguageCode)) {
+                                targetLanguagePhrase += currentAuthorPhraseObject.get("text").toString() + ", ";
+                            } else if (currentAuthorPhraseObject.get("language").toString().equals(otherLanguageCode)) {
+                                otherLanguagePhrase += currentAuthorPhraseObject.get("text").toString() + ", ";
+                            } else if (currentAuthorPhraseObject.get("language").toString().equals("eng")) {
+                                otherLanguagePhrase += currentAuthorPhraseObject.get("text").toString() + ", ";
+                            }
                         }
                     }
                 }
@@ -411,31 +431,20 @@ public class MainActivity extends ActionBarActivity {
                 }
 
                 if(otherDefinitions != "" || otherLanguagePhrase != ""){
-                    phraseTV.setVisibility(View.VISIBLE);
-                    phraseTV.setText("Definitions in Other Languages:" + otherDefinitions + otherLanguagePhrase);
+                    otherDefinitionsDescriptionTV.setVisibility(View.VISIBLE);
+                    otherDefinitionsTV.setVisibility(View.VISIBLE);
+                    otherDefinitionsTV.setText(otherDefinitions + otherLanguagePhrase);
                 }else{
-                    phraseTV.setVisibility(View.GONE);
+                    otherDefinitionsTV.setVisibility(View.GONE);
+                    otherDefinitionsDescriptionTV.setVisibility(View.GONE);
                 }
 
 
                 if(targetLanguagePhrase.equals("") && targetDefinition.equals("") && otherLanguagePhrase.equals("") && otherDefinitions.equals("")){
                     //No network results found
                     //Do a depper database search
-                    DatabaseController dbc = new DatabaseController(getApplicationContext());
-                    Word search_result = dbc.search(wordQueryET.getText().toString().trim(), languageSwitchFlag);
+                    OfflineSearch();
 
-                    if(search_result.getDefinition() != null){
-                        wordQueryTV.setText(search_result.getWord());
-                        if(search_result.getType()!=null){
-                            typeQueryTV.setVisibility(View.VISIBLE);
-                            typeQueryTV.setText(getString(R.string.type) + ": " + search_result.getType());
-                        }
-                        definitionTV.setVisibility(View.VISIBLE);
-                        definitionTV.setText(search_result.getDefinition());
-                        definitionTV.setGravity(0);// set the gravity to center
-                    }else {
-                        NoResults();
-                    }
                 }
 
 
@@ -448,17 +457,68 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-    private void NoResults(){
-        wordQueryTV.setText(getString((R.string.no_result_title)));
-        phraseTV.setVisibility(View.INVISIBLE);
-        typeQueryTV.setVisibility(View.INVISIBLE);
-        definitionTV.setText(getString(R.string.no_result_description));
-        definitionTV.setGravity(17);// set the gravity to center
+    private void OfflineSearch(){
+
+        DatabaseController dbc = new DatabaseController(getApplicationContext());
+        Word search_result = dbc.search(wordQueryET.getText().toString().trim(), languageSwitchFlag);
+
+        if(search_result.getDefinition() != null){
+            wordQueryTV.setText(search_result.getWord());
+            if(search_result.getType()!=null){
+                typeQueryTV.setVisibility(View.VISIBLE);
+                typeQueryTV.setText(getString(R.string.type) + ": " + search_result.getType());
+            }
+            definitionTV.setVisibility(View.VISIBLE);
+            definitionTV.setText(search_result.getDefinition());
+            definitionTV.setGravity(0);// set the gravity to center
+        }else {
+
+            wordQueryTV.setText(getString((R.string.no_result_title)));
+            otherDefinitionsTV.setVisibility(View.INVISIBLE);
+            otherDefinitionsDescriptionTV.setVisibility(View.INVISIBLE);
+            typeQueryTV.setVisibility(View.INVISIBLE);
+            definitionTV.setText(getString(R.string.no_result_description));
+            definitionTV.setGravity(17);// set the gravity to center
+        }
+    }
+
+
+
+    /**
+     * Check if Internet connectuion is available
+     */
+
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
     }
 
 
 
 
+    /**
+     * Network connection error dialog
+     */
+    private void networkErrorDialog() {
+
+        final Context context = this;
+        //Create the upgrade dialog
+        new AlertDialog.Builder(context)
+                .setTitle(getString(R.string.error_dialog_title))
+                .setMessage(R.string.no_internet_message)
+                .setPositiveButton(R.string.retry_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // reset the request
+
+                    }
+                })
+                .setIcon(R.drawable.ic_action_dark_error)
+                .show();
+    }
 
     /**
      * Initiate the adMob Banner
