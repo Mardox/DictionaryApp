@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.thirthydaylabs.entadic.MainActivity"
+    tools:context="com.thirthydaylabs.engtagdic.MainActivity"
     android:id="@+id/main_layout">
 
 
@@ -26,16 +26,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/switch_language_bt"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20px"
-            android:layout_marginBottom="50px"
             android:layout_below="@id/query_et"
-            android:layout_margin="15dp">
+            android:layout_marginBottom="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,7 +44,7 @@
 
                 <TextView
                     android:id="@+id/query_tv"
-                    android:textSize="40dp"
+                    android:textSize="30dp"
                     android:textStyle="bold"
                     android:textColor="#ff00a6dd"
                     android:layout_width="match_parent"
@@ -52,15 +52,22 @@
 
                 <TextView
                     android:id="@+id/description_tv"
-                    android:textSize="33dp"
-                    android:layout_marginTop="5dp"
+                    android:textSize="23dp"
                     android:textColor="#ff00a6dd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <TextView
+                    android:id="@+id/phrase_tv"
+                    android:textSize="23dp"
+                    android:textColor="#ff0089dd"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
                     android:id="@+id/type_tv"
-                    android:textSize="22dp"
+                    android:textSize="23dp"
                     android:textStyle="italic|bold"
                     android:textColor="#ff00a6dd"
                     android:layout_marginTop="10dp"

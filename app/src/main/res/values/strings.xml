@@ -7,9 +7,10 @@
     <string name="admob_id_home">ca-app-pub-7607380003153721/4076165492</string>
     <string name="admob_id_interstitials">ca-app-pub-7607380003153721/5552898691</string>
     <string name="language_b">Tagalog</string>
+    <string name="language_code_b">tgl</string>
+
     <string name="language_a">English</string>
-
-
+    <string name="language_code_a">eng</string>
 
     <string name="action_settings">Settings</string>
     <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo</string>
@@ -17,4 +18,5 @@
     <string name="no_result_title">No Results Found</string>
     <string name="no_result_description">hmm, looks like I haven\'t come accross this word before. :(</string>
     <string name="type">Type</string>
+    <string name="phrases">Phrases</string>
 </resources>
