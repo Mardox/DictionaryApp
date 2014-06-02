@@ -32,7 +32,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
-import com.thirthydaylabs.engtagdic.R;
+import com.thirthydaylabs.engaradic.R;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">English Tagalog Dictionary</string>
+    <string name="app_name">Arabic Dictionary</string>
 
 
-    <string name="admob_id_home">ca-app-pub-7607380003153721/4076165492</string>
-    <string name="admob_id_interstitials">ca-app-pub-7607380003153721/5552898691</string>
-    <string name="language_b">Tagalog</string>
-    <string name="language_code_b">tgl</string>
+    <string name="admob_id_home">ca-app-pub-7607380003153721/1919617899</string>
+    <string name="admob_id_interstitials"></string>
+    <string name="language_b">Arabic</string>
+    <string name="language_code_b">ara</string>
 
     <string name="language_a">English</string>
     <string name="language_code_a">eng</string>
