@@ -34,24 +34,24 @@ public class DatabaseController extends SQLiteAssetHelper {
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
-        String [] sqlSelect = {"word", "definition", "type"};
+        String [] sqlSelect = {"word", "definition"};
         String sqlTables = "words";
 
         qb.setTables(sqlTables);
         Cursor c ;
 
-        c = db.rawQuery("SELECT word, definition, type FROM "
+        c = db.rawQuery("SELECT word, definition FROM "
                 + TABLE_NAME + " where " + "word" + " like '" + query
                 + "' ORDER BY word ASC", null);
 
         if(!c.moveToFirst()){
-            c = db.rawQuery("SELECT word, definition, type FROM "
+            c = db.rawQuery("SELECT word, definition FROM "
                     + TABLE_NAME + " where " + "word" + " like '" + query
                     + "%' ORDER BY word ASC", null);
         }
 
         if (!c.moveToFirst()) {
-            c = db.rawQuery("SELECT word, definition, type FROM "
+            c = db.rawQuery("SELECT word, definition FROM "
                     + TABLE_NAME + " where " + "word" + " like '%" + query
                     + "%' ORDER BY word ASC", null);
         }
@@ -60,7 +60,6 @@ public class DatabaseController extends SQLiteAssetHelper {
             c.moveToFirst();
             result.setWord(c.getString(0));
             result.setDefinition(c.getString(1));
-            result.setType(c.getString(2));
             // Adding contact to list
         }
 
@@ -69,47 +68,6 @@ public class DatabaseController extends SQLiteAssetHelper {
     }
 
 
-
-    public Word deepLocalSearch(String query, boolean languageSwitch){
-
-        if(languageSwitch){
-            TABLE_NAME = "ab";
-        }else{
-            TABLE_NAME = "ba";
-        }
-
-        Word result = new Word();
-        SQLiteDatabase db = getReadableDatabase();
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-
-        String [] sqlSelect = {"word", "definition", "type"};
-        String sqlTables = "words";
-
-        qb.setTables(sqlTables);
-        Cursor c ;
-
-        c = db.rawQuery("SELECT word, definition, type FROM "
-                    + TABLE_NAME + " where " + "word" + " like '" + query
-                    + "%' ORDER BY word ASC", null);
-
-
-        if (!c.moveToFirst()) {
-            c = db.rawQuery("SELECT word, definition, type FROM "
-                    + TABLE_NAME + " where " + "word" + " like '%" + query
-                    + "%' ORDER BY word ASC", null);
-        }
-
-        if (c.moveToFirst()) {
-            c.moveToFirst();
-            result.setWord(c.getString(0));
-            result.setDefinition(c.getString(1));
-            result.setType(c.getString(2));
-            // Adding contact to list
-        }
-
-        return result;
-
-    }
 
     public Cursor getEmployees() {
 

@@ -177,7 +177,7 @@ public class MainActivity extends ActionBarActivity {
 
         //Initiate the Admob banner
         adMobBannerInitiate();
-        //adMobInterstitialInitiate();
+        adMobInterstitialInitiate();
 
 
     }
@@ -599,6 +599,24 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+
+    /**
+     * Override the back button
+     */
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event)
+    {
+        if (keyCode== KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)
+        {
+
+            if(!getString(R.string.admob_id_interstitials).equals("")){
+                //RevMob Full Screen Ad
+                displayInterstitial();
+            }
+            // return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 
     /**
